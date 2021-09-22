@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+    <title>Color Scheme Generator</title>
+    <link rel="stylesheet" type="text/css" href="style_col_gen_ben.css">
+</head>
+<body onload="update_colors()">
+    <div id="title" class="top container">
+        <h1>Color Scheme Generator</h1>
+        <p>Created by Ben Hartley</p>
+    </div>
+    <div id="controls" class="mid container">
+        <h1>Controls</h1>
+        Scheme Type
+        <select name="scheme" id="scheme_dropdown">
+            <option value="monochromatic">Monochromatic</option>
+            <option value="complementary">Complementary</option>
+            <option value="triadic" selected>Triadic</option>
+        </select>
+        <br>
+        Variance
+        <input name="variance" id="variance" type="number" min=0.0001 step=0.0001 value="0.02">
+        <br>
+        <button onclick="remove_color();">Remove Color</button><button onclick="add_color();">Add Color</button>
+        <br>
+        <button onclick="update_colors();">Generate Colors</button>
+    </div>
+    <div id="colors" class="mid container"></div>
+</body>
+<script src="color_scheme_gen.js"></script>
+<script>
+
+var scheme = "triadic";
+var num_colors = 3;
+var variance = 0.02;
+
+let base_color_style = "height:250px;"
+
+let color_container = document.getElementById("colors");
+var color_divs = [];
+
+function update_colors() {
+    scheme = document.getElementById("scheme_dropdown").value;
+    variance = document.getElementById("variance").value;
+    if (scheme == "triadic") {
+        col_gen_res = triadic_scheme(num_colors, variance);
+    } else if (scheme == "complementary") {
+        col_gen_res = complementary_scheme(num_colors, variance);
+    } else if (scheme == "monochromatic") {
+        col_gen_res = monochromatic_scheme(num_colors, variance);
+    } else {
+        col_gen_res = triadic_scheme(num_colors, variance);
+    }
+
+    for (let i=0; i < color_divs.length; i++) {
+        color_divs[i].remove();
+    }
+
+    for (let i=0; i < num_colors; i++) {
+        var new_color_div = document.createElement("div");
+
+        new_color_div.style = base_color_style + "background-color:rgb(" + col_gen_res[1][i][0] + "," + col_gen_res[1][i][1] + "," + col_gen_res[1][i][2] + ");"
+
+        color_divs.push(new_color_div);
+        color_container.appendChild(new_color_div);
+    }
+}
+
+function add_color() {
+    num_colors += 1;
+    update_colors();
+}
+function remove_color() {
+    num_colors -= 1;
+    update_colors();
+}
+</script>
